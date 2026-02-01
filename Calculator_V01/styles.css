@@ -57,6 +57,7 @@ body{
     width: 100%;
     height: 70%;
     background-color: gray;
+}
 
 .button{
     width: 20%;
@@ -66,4 +67,18 @@ body{
     display: inline-flex;
     font-size: 1.5rem;
     justify-content: space-around;
+    align-items: center;
+    box-sizing: border-box;
+    
+}
+.button:hover{
+    background-color: darkgray;
+    cursor: pointer;
+}
+#clear{
+    background-color: red;
+    color: white;
+}
+#clear:hover{
+    background-color: darkred;
 }
