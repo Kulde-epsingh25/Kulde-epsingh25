@@ -30,7 +30,6 @@
     width: 100%;
     height: 50%;
     background-color: lightgray;
-    direction: rtl;
     margin-bottom: 2%; 
     border: 1px solid black; 
     align-content: center;
@@ -81,9 +80,9 @@
     
 }
 .button{
-    width: 20%;
+    width: 18%;
     aspect-ratio: 1 / 1;
-    margin: 1%;
+    margin: 3% 1% 1% 4%;
     background-color: lightgray;
     border: 2px solid black;
     display: inline-flex;
@@ -97,10 +96,10 @@
     background-color: darkgray;
     cursor: pointer;
 }
-#clear{
+#C{
     background-color: red;
     color: white;
 }
-#clear:hover{
+#C:hover{
     background-color: darkred;
 }
