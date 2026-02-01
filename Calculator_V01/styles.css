@@ -13,8 +13,8 @@
     align-items: center;
 }
 .outer{
-    width: 50vw;
-    height: 60vh;
+    width: 50%;
+    height: 70%;
     background-color: rgb(88, 241, 241);
     border: 5px solid rgb(0, 0, 0);
     box-sizing: border-box;
@@ -28,7 +28,7 @@
 }
 .input_screen{
     width: 100%;
-    height: 7.5vh;
+    height: 50%;
     background-color: lightgray;
     direction: rtl;
     margin-bottom: 2%; 
@@ -47,7 +47,7 @@
 }
 .outer_screen{
     width: 100%;
-    height: 6.5vh;
+    height: 35%;
     direction: rtl;
     display: inline-flex;
 }
@@ -74,12 +74,12 @@
     font-size: 1.2rem;
 
 }
-.buttons{
+.button_container{
     width: 100%;
-    height: 75%;
+    height: 71%;
     background-color: gray;
+    
 }
-
 .button{
     width: 20%;
     aspect-ratio: 1 / 1;
@@ -87,8 +87,8 @@
     background-color: lightgray;
     border: 2px solid black;
     display: inline-flex;
-    font-size: 1.5rem;
-    justify-content: space-around;
+    font-size: 1.2rem;
+    justify-content: center;
     align-items: center;
     box-sizing: border-box;
     box-shadow: inset 0 0 15px rgba(0,0,0,0.5);
