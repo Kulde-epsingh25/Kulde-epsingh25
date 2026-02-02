@@ -77,31 +77,36 @@ function calculate(){
     try{
     while(newexpression.includes('/')){
         const index = newexpression.indexOf('/');
-        const result = parseFloat(newexpression[index - 1]) / parseFloat(newexpression[index + 1]);
+        let result = 0;
+        if(newexpression[index + 1] === '0') {
+            throw new Error('Infinity');
+        }
+        else {
+        result = parseFloat(newexpression[index - 1]) / parseFloat(newexpression[index + 1]);
         newexpression.splice(index - 1, 3, result);
+        }
     }
     while(newexpression.includes('*')){
         const index = newexpression.indexOf('*');
         const result = parseFloat(newexpression[index - 1]) * parseFloat(newexpression[index + 1]);
         newexpression.splice(index - 1, 3, result);
     }
-    while(newexpression.includes('+')){
-        const index = newexpression.indexOf('+');
+
+    while(newexpression.includes('+') || newexpression.includes('-')){
+        const indexPlus = newexpression.indexOf('+');
+        const indexMinus = newexpression.indexOf('-');
         let result = 0;
-        if(newexpression[index - 2] === '-') {
-            result = parseFloat(newexpression[index - 1]) - parseFloat(newexpression[index + 1]);
-            newexpression.splice(index - 2, 4, result);
-            continue;
-        } else {
-            result = parseFloat(newexpression[index - 1]) + parseFloat(newexpression[index + 1]);
+        if(indexPlus !== -1 && (indexPlus < indexMinus || indexMinus === -1)){ 
+            result = parseFloat(newexpression[indexPlus - 1]) + parseFloat(newexpression[indexPlus + 1]);
+            console.log(newexpression);
+            newexpression.splice(indexPlus - 1, 3, result);
+        } else if(indexMinus !== -1){
+            result = parseFloat(newexpression[indexMinus - 1]) - parseFloat(newexpression[indexMinus + 1]);
+            console.log(newexpression);
+            newexpression.splice(indexMinus - 1, 3, result);
         }
     }
-    while(newexpression.includes('-')){
-        const index = newexpression.indexOf('-');
-        const result = parseFloat(newexpression[index - 1]) - parseFloat(newexpression[index + 1]);
-        newexpression.splice(index - 1, 3, result);
-    }
-    if(newexpression[0] === 'NaN') resultScreen.textContent = 'Error';
+    if(Number.isNaN(newexpression[0])) throw new Error('Error: NaN');
     else resultScreen.textContent = newexpression[0];
     
     } catch (error) {
