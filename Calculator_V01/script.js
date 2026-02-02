@@ -1,103 +1,75 @@
-const Buttons = document.
-querySelectorAll('.button');
-const inputScreen = document.
-getElementById('input');
-const resultScreen = document.
-getElementById('result');
-function updateScreen(event){
-    if(event === 'C')  inputScreen.textContent = inputScreen.textContent.slice(0, -1);
-    else  if(event === 'clear') inputScreen.textContent = '';
+const Buttons = document
+    .querySelectorAll('.button');
+const inputScreen = document
+    .getElementById('input');
+const resultScreen = document
+    .getElementById('result');
+function updateScreen(event) {
+    if (event === 'C') inputScreen.textContent = inputScreen.textContent.slice(0, -1);
+    else if (event === 'clear') inputScreen.textContent = '';
+    else if( (event === '+' || event === '-' || event === '*' || event === '/')  && chechlast() ){
+        return;
+    }
     else
         inputScreen.textContent += event;
 }
-Buttons.
-forEach(button => button
-                        .addEventListener('click', (event) => 
-                            { 
-                                updateScreen(event.target.id);
-                            })
-        );
+Buttons
+    .forEach(button => button
+        .addEventListener('click', (event) => {
+            updateScreen(event.target.id);
+            calculate();
+        })
+    );
 const clear = document.getElementById('C');
 let holdInterval;
 clear.addEventListener('mousedown', () => {
-    holdInterval =setInterval(() => {
+    holdInterval = setInterval(() => {
         inputScreen.textContent = '';
     }, 1000)
-});
+})
 clear.addEventListener('mouseup', () => {
     clearTimeout(holdInterval);
-   
-});
+
+})
 clear.addEventListener('mouseleave', () => {
     clearTimeout(holdInterval);
-   
-});
+
+})
+
+document.onselectstart = (e) => {
+  e.preventDefault();
+  return false;
+};
+
 
 function calculate(){
-    try{
-        let input = inputScreen.textContent;
-        let result = input.split(' ');
-        
-        console.log(result);
-
-    } catch(error){
-       
-    }
+    console.log('Calculating');
 }
-addEventListener('keydown', (event) =>{
-    switch(event.key){
-        case '1':
-            updateScreen(1);
-            calculate();
-            break;
-        case '2':
-            updateScreen(2);
-            calculate();
-            break;
-        case '3':
-            updateScreen(3);
-            calculate();
-            break;
-        case '4':
-            updateScreen(4);
-            calculate();
-            break;
-        case '5':
-            updateScreen(5);
-            calculate();
-            break;
-        case '6':
-          
-            updateScreen(6);
-            calculate();
-            break;
-        case '7':
-            updateScreen(7);
-            calculate();
-            break;
-        case '8':
-            updateScreen(8);
-            calculate();
-            break;
-        case '9':
-            updateScreen(9);
-            calculate();
-            break;
-        case '0':
-            updateScreen(0);
-            calculate();
-            break;
+function chechlast() {
+    const lastchar = inputScreen.textContent.at(-1);
+    if (lastchar === '+' || lastchar === '-' || lastchar === '*' || lastchar === '/') {
+        return true;
+    }
+    return false;
+}
+addEventListener('keydown', (event) => {
+    if (isFinite(+event.key)) {
+        updateScreen(event.key);
+        calculate();
+        return;
+    }
+     switch (event.key) {
         case '+':
-            updateScreen(' + ');
+            updateScreen('+');
             break;
         case '-':
-            updateScreen(' - ');
+            updateScreen('-');
             break;
         case '*':
-            updateScreen(' * ');
+            updateScreen('*');
             break;
         case '/':
-            updateScreen(' / ');
+            updateScreen('/');
             break;
         case '=':
             calculate();
@@ -108,13 +80,14 @@ addEventListener('keydown', (event) =>{
         case 'Enter':
             calculate();
             break;
-       case 'Backspace':
+        case 'Backspace':
             updateScreen('C');
             calculate();
             break;
-        case 'delete':
+        case 'Delete':
             updateScreen('clear');
             break;
-        
-    }   
-}) 
+        default:
+            break;
+    }
+})
