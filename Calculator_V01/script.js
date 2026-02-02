@@ -4,6 +4,13 @@ const inputScreen = document
     .getElementById('input');
 const resultScreen = document
     .getElementById('result');
+function checklast() {
+    const lastchar = inputScreen.textContent.at(-1);
+    if (lastchar === ' ') {
+        return true;
+    }
+    else return false;
+}
 function updateScreen(event) {
     if (event === 'C'){ 
         if(inputScreen.textContent.at(-1) === ' '){
@@ -17,14 +24,22 @@ function updateScreen(event) {
         inputScreen.textContent = '';
         resultScreen.textContent = '';
     }
-    else if( (event === '+' || event === '-' || event === '*' || event === '/')  && chechlast() ){
-        return;
-    }
-    else if( (event === '+' || event === '-' || event === '*' || event === '/')  && !chechlast() ){
+    else if( (event === '+' || event === '-' || event === '*' || event === '/')  && checklast() ){
+        inputScreen.textContent = inputScreen.textContent.slice(0, -3);
         inputScreen.textContent += ` ${event} `;
     }
-    else
+    else if( (event === '+' || event === '-' || event === '*' || event === '/')  && !checklast() ){
+        inputScreen.textContent += ` ${event} `;
+    }
+    else if(checklast() && event === '.' ){
+        inputScreen.textContent += `0${event}`;
+    }
+    else if(inputScreen.textContent === '' && (event === '+' || event === '-' || event === '*' || event === '/')){
+        inputScreen.textContent += `0`;
+    }
+    else{
         inputScreen.textContent += event;
+    }
 }
 Buttons
     .forEach(button => button
@@ -56,8 +71,10 @@ document.onselectstart = (e) => {
 let newexpression = [];
 
 function calculate(){
+
     const expression = inputScreen.textContent;
      newexpression = expression.split(' ');
+    try{
     while(newexpression.includes('/')){
         const index = newexpression.indexOf('/');
         const result = parseFloat(newexpression[index - 1]) / parseFloat(newexpression[index + 1]);
@@ -70,28 +87,28 @@ function calculate(){
     }
     while(newexpression.includes('+')){
         const index = newexpression.indexOf('+');
-        const result = parseFloat(newexpression[index - 1]) + parseFloat(newexpression[index + 1]);
-        newexpression.splice(index - 1, 3, result);
+        let result = 0;
+        if(newexpression[index - 2] === '-') {
+            result = parseFloat(newexpression[index - 1]) - parseFloat(newexpression[index + 1]);
+            newexpression.splice(index - 2, 4, result);
+            continue;
+        } else {
+            result = parseFloat(newexpression[index - 1]) + parseFloat(newexpression[index + 1]);
+        }
     }
     while(newexpression.includes('-')){
         const index = newexpression.indexOf('-');
         const result = parseFloat(newexpression[index - 1]) - parseFloat(newexpression[index + 1]);
         newexpression.splice(index - 1, 3, result);
-        if(newexpression.length === 1 || newexpression[0] < 0){
-            newexpression[0] = `${Math.abs(newexpression[0])}-`;
-            console.log('negative');
-        }
     }
-    if(newexpression.length === 0 && newexpression[0] === NaN) brack;
+    if(newexpression[0] === 'NaN') resultScreen.textContent = 'Error';
     else resultScreen.textContent = newexpression[0];
-}
-function chechlast() {
-    const lastchar = inputScreen.textContent.at(-1);
-    if (lastchar === '+' || lastchar === '-' || lastchar === '*' || lastchar === '/') {
-        return true;
+    
+    } catch (error) {
+        resultScreen.textContent = 'Error';
     }
-    return false;
 }
+
 addEventListener('keydown', (event) => {
     if (isFinite(+event.key)) {
         updateScreen(event.key);
@@ -100,16 +117,16 @@ addEventListener('keydown', (event) => {
     }
      switch (event.key) {
         case '+':
-            updateScreen(' + ');
+            updateScreen('+');
             break;
         case '-':
-            updateScreen(' - ');
+            updateScreen('-');
             break;
         case '*':
-            updateScreen(' * ');
+            updateScreen('*');
             break;
         case '/':
-            updateScreen(' / ');
+            updateScreen('/');
             break;
         case '=':
             calculate();
