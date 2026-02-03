@@ -112,21 +112,21 @@
 .hour{
     height: 800%;
     width: 35%;
-    z-index: 7;
+    z-index: -1;
     transform: translateY(0%) translateX(-50%);
 }
 .minute{
     height: 1000%;
     width: 15%;
     z-index: 0;
-    transform: rotate(90deg) translateY(0%) translateX(-50%);#
+    transform:  translateY(0%) translateX(-50%);
 }
 .second{
     height: 900%;
     width: 15%;
     background-color: red;
     z-index: 15;
-    transform: rotate(180deg) translateY(-5%) translateX(50%);
+    transform:  translateY(0%) translateX(-50%);
 }
 #secCircle{
     width: 100%;
