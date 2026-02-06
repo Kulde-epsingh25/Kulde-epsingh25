@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz Game</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <div class="screen active" id="start-screen">
+            <h1>Welcome to the Quiz Game!</h1>
+            <p>Get ready to test your knowledge.</p>
+            <button id="startBtn">Start Quiz</button>
+        </div>
+    </div>
+    <div class="screen" id="quiz-screen">
+        <div class="quiz-header">
+            <h2 id="question">Question text</h2>
+            <div class="quiz-info">
+                <p>
+                    Question <span id="question-number">1</span> of <span id="total-questions">10</span>
+                </p>
+                <p>Score: <span id="score">0</span></p>
+            </div>
+        </div>
+        <div class="answers-container" id="answers-container">
+        </div>
+        <div class="progress-bar">
+            <div class="progress" id="progress"></div>
+        </div>
+    </div>
+    <div class="screen active" id="result-screen">
+        <h1>Quiz Completed!</h1>
+       <div class="result-info">
+        <p>Your final score is: <span id="final-score">0</span> out of <span id="total-questions-result">10</span></p>
+        <div id="result-message">
+            Good job! You have a great knowledge of the subject. Keep it up!
+        </div>
+        <button id="restartBtn">Restart Quiz</button>
+       </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
