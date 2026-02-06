@@ -4,3 +4,127 @@
     box-sizing: border-box;
 }
 
+body{
+    background-color: #f5efe6;
+    font-family: 'Arial', sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 1rem;
+}
+
+.container{
+    background-color: #fff;
+    border-radius: 1rem;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    width: 100%;
+    max-width: 600px;
+    overflow: hidden;
+    position: relative;
+}
+.screen{
+    display: none;
+    padding: 2rem;
+    text-align: center;
+}
+.active{
+    display: block;
+}
+
+#start-screen h1{
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+    color: #f6c42e;
+}
+.quiz-header{
+    margin-bottom: 1rem;
+}
+#question{
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+    color: #333;
+    line-height: 1.4;
+}
+.quiz-info{
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 1rem;
+    color: #666;
+}
+.answers{
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+}
+.answer-btn{
+    background-color: #f6c42e;
+    border: 2px solid #eadbc8;
+    border-radius: 0.5rem;
+    padding: 0.75rem;
+    font-size: 1rem;
+    color: #333;
+    cursor: pointer;
+    text-align: left;
+    transition: all 0.3s ease;
+}
+.answer-btn:hover{
+    background-color: #f0b020;
+    border-color: #666;
+}
+
+.answer-btn.correct{
+    background-color: #4caf50;
+    border-color: #175e19;
+    color: #fff;
+}
+.answer-btn.incorrect{
+    background-color: #f44336;
+    border-color: #7a1c1c;
+    color: #fff;
+}
+.progress-container{
+    background-color: #eee;
+    border-radius: 0.5rem;
+    height: 10px;
+    overflow: hidden;
+    margin-top: 1rem;
+}
+.progress{
+    background-color: #4caf50;
+    height: 100%;
+    width: 0%;
+    transition: width 0.3s ease;
+}
+
+#result-screen h1{
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+    color: #f6c42e;
+}
+.result-info{
+    font-size: 1.2rem;
+    color: #333;
+    background-color: #eadbc8;
+    margin-bottom: 1rem;
+}
+.result-info p{
+    margin-bottom: 0.5rem;
+    font-size: 1.5rem;
+    font-weight: bold;
+}
+.button{ 
+    background-color: #f6c42e;
+    border: 2px solid #eadbc8;
+    border-radius: 0.5rem;
+    padding: 0.75rem 1.5rem;
+    font-size: 1rem;
+    color: #333;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+.button:hover{
+    background-color: #f0b020;
+    border-color: #666;
+}
