@@ -5,7 +5,9 @@ const startBtn = document.getElementById('startBtn');
 const restartBtn = document.getElementById('restartBtn');
 const questionEl = document.getElementById('question');
 const answercontainer = document.getElementById('answers-container');
+const answerButtons = document.querySelectorAll('.answer-btn');
 const currentquestionEl = document.getElementById('current-question');
+const qustionnumberEl = document.getElementById('question-number');
 const totalquestionsEl = document.getElementById('total-questions');
 const scoreEl = document.getElementById('score');
 const finalscoreEl = document.getElementById('final-score');
@@ -121,22 +123,67 @@ function startQuiz() {
     quizscreen.classList.add('active');
     showquestion();
 }
-
-function showquestion() {
+function showquestion(){
     const currentQuestion = quizQuestions[currentQuestionIndex];
     questionEl.textContent = currentQuestion.question;
-    answercontainer.innerHTML = '';
-    currentquestionEl.textContent = currentQuestionIndex + 1;
     progressBar.style.width = `${((currentQuestionIndex) / quizQuestions.length) * 100}%`;
-    answerDisabled = false; 
-    currentQuestion.answers.forEach(answer => {
+    answerDisabled = false;
+    qustionnumberEl.textContent = `${currentQuestionIndex + 1}`;
+    answercontainer.innerHTML = '';
+    currentQuestion.answers.forEach(answers => {
         const button = document.createElement('button');
-        button.textContent = answer.text;
+        button.textContent = answers.text;
         button.classList.add('answer-btn');
-        if (answer.correct) {
-            button.dataset.correct = answer.correct;
+      if(answers.correct){
+            button.dataset.correct = answers.correct;
         }
-        button.addEventListener('click', selectAnswer);
+
+        button.addEventListener('click', selectAnswer = (e) => {
+            if (answerDisabled) return;
+            const selectedButton = e.target;
+            const correct = selectedButton.dataset.correct;
+            if (correct) {
+                score++;
+                scoreEl.textContent = score;
+                button.classList.add('correct');
+            }
+            else {
+                button.classList.add('incorrect');
+                 Array.from(answercontainer.children).forEach(button => {
+                if (button.dataset.correct) {
+                    button.classList.add('correct');
+                }
+            });
+            }
+    answerDisabled = true;
+    setTimeout(() => {
+        currentQuestionIndex++;
+        if(currentQuestionIndex < quizQuestions.length){
+            showquestion();
+        }else{
+            showresult();
+        }
+    }, 1000); } ) 
         answercontainer.appendChild(button);
     });
+
+}
+function showresult(){
+    quizscreen.classList.remove('active');
+    resultscreen.classList.add('active');
+    finalscoreEl.textContent = score;
+    if(score / quizQuestions.length >= 0.8){
+        resultmessageEl.textContent = "Excellent work! You're a quiz master!";
+    }else if(score / quizQuestions.length >= 0.5){
+        resultmessageEl.textContent = "Good job! You have a solid understanding.";
+    }else{
+        resultmessageEl.textContent = "Don't worry, keep practicing and you'll improve!";
+    }
+}
+function restartQuiz(){
+    resultscreen.classList.remove('active');
+    startscreen.classList.add('active');
+    currentQuestionIndex = 0;
+    score = 0;
+    scoreEl.textContent = score;
 }
