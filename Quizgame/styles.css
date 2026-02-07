@@ -75,16 +75,16 @@ body{
 }
 
 .answer-btn.correct{
-    background-color: #4caf50;
-    border-color: #175e19;
+    background-color: #cef7cf;
+    border-color: #91ee94;
     color: #fff;
 }
 .answer-btn.incorrect{
-    background-color: #f44336;
-    border-color: #7a1c1c;
+    background-color: #f89f99;
+    border-color: #f35555;
     color: #fff;
 }
-.progress-container{
+.progress-bar{
     background-color: #eee;
     border-radius: 0.5rem;
     height: 10px;
@@ -95,7 +95,7 @@ body{
     background-color: #fcba48;
     height: 100%;
     width: 0%;
-    transition: width 0.3s ease;
+    transition: width 0.5s ease;
 }
 
 #result-screen h1{
