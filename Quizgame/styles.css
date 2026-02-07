@@ -43,7 +43,7 @@ body{
 #question{
     font-size: 1.5rem;
     margin-bottom: 1rem;
-    color: #333;
+    color: #181301;
     line-height: 1.4;
 }
 .quiz-info{
@@ -92,7 +92,7 @@ body{
     margin-top: 1rem;
 }
 .progress{
-    background-color: #4caf50;
+    background-color: #fcba48;
     height: 100%;
     width: 0%;
     transition: width 0.3s ease;
@@ -106,15 +106,16 @@ body{
 .result-info{
     font-size: 1.2rem;
     color: #333;
-    background-color: #eadbc8;
-    margin-bottom: 1rem;
+    background-color: #fbfaec;
+    border-radius: 1rem;
+    padding: 1rem;
 }
 .result-info p{
     margin-bottom: 0.5rem;
     font-size: 1.5rem;
     font-weight: bold;
 }
-.button{ 
+button{ 
     background-color: #f6c42e;
     border: 2px solid #eadbc8;
     border-radius: 0.5rem;
@@ -122,9 +123,29 @@ body{
     font-size: 1rem;
     color: #333;
     cursor: pointer;
+    margin: 2rem 0 2rem 0;
     transition: all 0.3s ease;
 }
-.button:hover{
+button:hover{
     background-color: #f0b020;
     border-color: #666;
+}
+
+@media (max-width: 500px){
+    .container{
+        padding: 1rem;
+    }
+    .screen{
+        padding: 1rem;
+    }
+    #start-screen h1, #result-screen h1{
+        font-size: 2rem;
+    }
+    #question{
+        font-size: 1.2rem;
+    }
+    .answer-btn{
+        font-size: 0.9rem;
+        padding: 0.5rem;
+    }
 }
