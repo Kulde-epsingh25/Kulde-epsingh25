@@ -1,0 +1,93 @@
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background-color: #625a5a;
+}
+
+.container{
+    text-align: center;
+    width:100%;
+    padding:1.2rem;
+}
+h1{
+    color: #1b0505;
+    margin-bottom: 1.2rem;
+    font-size: 2.rem;
+}
+.board{
+    display: flex;
+    justify-content: space-around;
+    gap: 1.2rem;
+    align-items: flex-start;
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+.list{
+
+    background-color: #f8dd86;
+    padding: 1.2rem;
+    border-radius: 0 2.5rem;
+    width: 30%;
+    height:55vh;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);  
+}
+
+.list h2{
+    margin-bottom: 1.2rem;
+    color: #1b0505;
+    font-size: 1.5rem;
+}
+
+.card{
+    padding: 0.8rem;
+    margin-bottom: 0.2rem;
+    border-radius: 0.5rem;
+    cursor: grab;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); 
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.card:active{
+    cursor: grabbing;
+    transform: scale(1.05);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.list.drag-over{
+    background-color: #f0c14b;
+}
+.items{
+    max-height: 80%;
+    overflow-y: scroll;
+    scrollbar-width: none;
+}
+.add{
+    background: linear-gradient(90deg, #8def14, #feb47b);
+    color: #f9f345;
+    padding: 0.5rem;
+    border-radius: 50%;
+    width: 2.5rem;
+    height: 2.5rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 3.5rem;
+    cursor: pointer;
+    margin-top: 1.2rem;
+    position:relative;
+    left: 95%;
+    z-index: 10;
+}
+.add:hover{
+    background: linear-gradient(90deg, #feb47b, #8def14);
+    z-index: 20;
+}
+ 
