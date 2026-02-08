@@ -1,21 +1,23 @@
 const newcard = document.getElementById('new-btn');
 const lists = document.querySelectorAll('.items');
+const listContainers = document.querySelectorAll('.list');
 const cards = document.querySelectorAll('.card');
 
-newcard.addEventListener('click', addCard); 
+newcard.addEventListener('click', addCard);
 cards.forEach(card => {
-    console.log(card);
+    ensureCardId(card);
     card.addEventListener('dragstart', dragStart);
     card.addEventListener('dragend', dragEnd);
-    });
-for(const list of lists) {
+});
+for (const list of listContainers) {
     list.addEventListener('dragover', dragOver);
     list.addEventListener('dragenter', dragEnter);
     list.addEventListener('dragleave', dragLeave);
     list.addEventListener('drop', dragDrop);
 }
 function dragStart(e) {
-    e.dataTransfer.setData('text/plain', e.target.id);
+    ensureCardId(e.currentTarget);
+    e.dataTransfer.setData('text/plain', e.currentTarget.id);
 
 }
 function dragEnd(e) {
@@ -26,30 +28,35 @@ function dragOver(e) {
 }
 function dragEnter(e) {
     e.preventDefault();
-    e.target.classList.add('drag-over');
+    e.currentTarget.classList.add('drag-over');
 }
 function dragLeave(e) {
-    e.target.classList.remove('drag-over');
+    e.currentTarget.classList.remove('drag-over');
 }
 function dragDrop(e) {
     e.preventDefault();
     const id = e.dataTransfer.getData('text/plain');
     const draggable = document.getElementById(id);
-    e.target.appendChild(draggable);
-    e.target.classList.remove('drag-over');
+    const items = e.currentTarget.querySelector('.items');
+    if (draggable && items) {
+        items.appendChild(draggable);
+    }
+    e.currentTarget.classList.remove('drag-over');
 }
 function addCard() { 
     const card = document.createElement('div');
     card.className = 'card';
-    card.id = `card-${Date.now()}`;
+    ensureCardId(card);
     card.draggable = true;
     card.textContent = 'New Task';
     lists[0].appendChild(card);
     editcard(card);
-        card.addEventListener('contextmenu', (e) => {
-            e.preventDefault();
-            editcard(card);
-        });
+    card.addEventListener('dragstart', dragStart);
+    card.addEventListener('dragend', dragEnd);
+    card.addEventListener('contextmenu', (e) => {
+        e.preventDefault();
+        editcard(card);
+    });
 }
  
 function editcard(card) {   
@@ -60,6 +67,12 @@ function editcard(card) {
     else {
         card.remove();
     } 
+}
+
+function ensureCardId(card) {
+    if (!card.id) {
+        card.id = `card-${Date.now()}-${Math.floor(Math.random() * 1000)}`;
+    }
 }
 
 
