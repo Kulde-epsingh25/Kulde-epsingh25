@@ -9,16 +9,17 @@ body{
     justify-content: center;
     align-items: center;
     min-height: 100vh;
-    width:100vw;
+    width: 100vw;
+    padding: 1.5rem 1rem;
     background-color: #625a5a;
 }
 .container{
     text-align: center;
-    width:50%;
-    min-height:90vh;
-    padding:1.2rem;
+    width: min(100%, 760px);
+    min-height: 90vh;
+    padding: 1.2rem;
     background: linear-gradient(135deg, #befcba, #f4b2b2);
-    border-radius:  1rem;
+    border-radius: 1rem;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);  
 }
 
@@ -43,14 +44,17 @@ h3{
     align-items: flex-start;
     width: 100%;
     max-width: 1200px;
-    margin: 0 auto;
+    margin-bottom: 1.2rem;
+}
+.tracker h2{
+    word-break: break-word;
 }
 .summary{
     gap: 1.2rem;
     align-items: center;
     width: 100%;
     max-width: 1200px;
-    margin: 0 auto;
+    margin-bottom: 1.2rem;
     border-radius: 0 1rem;
     padding: 1.2rem;  
     display: flex;
@@ -62,7 +66,7 @@ h3{
     padding: 1.2rem;
     border-radius: 0.5rem;
     width: 50%;
-     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
 }
 .summary-box h3{
     margin-bottom: 0.8rem;
@@ -90,7 +94,7 @@ h3{
     gap: 1.2rem;
 }
 
-.transction-conatiner{
+.transaction-container{
     background-color: #f8dd86;
     padding: 1.2rem;
     border-radius: 0 1rem;
@@ -99,27 +103,27 @@ h3{
     transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
-#transation-list{
+.transaction-list{
     list-style: none;
-    max-width: 500px;
+    max-width: 100%;
     overflow-y: auto;
     padding: 0.8rem;
     flex-grow: 1;
 }
-#transation-list::-webkit-scrollbar-thumb{
+.transaction-list::-webkit-scrollbar-thumb{
     background: #cbd5e0;
     border-radius: 0.5rem;
     
 }
-#transation-list::-webkit-scrollbar-track{
+.transaction-list::-webkit-scrollbar-track{
     background: transparent;
     border-radius: 0.5rem;
 }
 
-.transation-list::-webkit-scrollbar-thumb:hover{
+.transaction-list::-webkit-scrollbar-thumb:hover{
     background: #a0a0a0;
 }
-.transation{
+.transaction-item{
     display:flex;
     justify-content: space-between;
     align-items: center;
@@ -131,10 +135,10 @@ h3{
     border-right: 5px solid;
     animation: slideIn 0.3s ease;
 }
-.transation.income{
+.transaction-item.income{
     border-color: #37fa4e;
 }
-.transation.expense{
+.transaction-item.expense{
     border-color: #fd563c;
 }
 @keyframes slideIn {
@@ -147,11 +151,11 @@ h3{
         transform: translateX(0);
     }
 }
-.transation:hover{
+.transaction-item:hover{
     transform: translateY(-5px);
     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);  
 }
-.transation .delete-btn{
+.transaction-item .delete-btn{
     background: none;
     border: none;
     color: #1b0505;
@@ -160,14 +164,14 @@ h3{
     opacity: 0;
     transition: opacity 0.2s ease;
 }
-.transation:hover .delete-btn{
+.transaction-item:hover .delete-btn{
     opacity: 1;
 }
-.transation .delete-btn:hover{
+.transaction-item .delete-btn:hover{
     color: #fd563c;
     transform: scale(1.1);
 }
-.income , .expense {
+.summary-box.income , .summary-box.expense {
     background-color: #f8dd86;
     padding: 1.2rem;
     border-radius: 0 0.5rem;
@@ -176,11 +180,11 @@ h3{
     transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
-.income:hover , .expense:hover{
+.summary-box.income:hover , .summary-box.expense:hover{
     transform: translateY(-5px);
     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4);  
 }
-.income h3 , .expense h3{
+.summary-box.income h3 , .summary-box.expense h3{
     margin-bottom: 0.8rem;
     color: #1b0505;
     font-size: 1.2rem;
@@ -208,6 +212,7 @@ h3{
 }
 .form-container form{
     display: flex;
+    justify-content: space-between;
     flex-direction: column;
     gap: 0.8rem;
 }
@@ -231,3 +236,78 @@ h3{
     background-color: #2ecc71;
 }
 
+.form-container label{
+    color: #1b0505;
+    font-size: 1rem;
+    font-weight: 600;
+    text-align: left;
+}
+
+@media (max-width: 1024px){
+    .container{
+        width: 80%;
+        min-height: auto;
+    }
+    .summary{
+        gap: 0.8rem;
+    }
+    .summary-box{
+        width: 100%;
+    }
+}
+
+@media (max-width: 768px){
+    body{
+        align-items: flex-start;
+        padding: 1.2rem 0.8rem;
+    }
+    .container{
+        width: 100%;
+        padding: 1rem;
+    }
+    .summary{
+        flex-direction: column;
+        align-items: stretch;
+        padding: 0.8rem;
+    }
+    .summary-box{
+        width: 100%;
+    }
+    .transaction-item{
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.6rem;
+    }
+    .transaction-item .delete-btn{
+        align-self: flex-end;
+        opacity: 1;
+    }
+}
+
+@media (max-width: 480px){
+    h1{
+        font-size: 1.6rem;
+    }
+    h3{
+        font-size: 1.2rem;
+    }
+    .summary-box p,
+    #income,
+    #expense{
+        font-size: 2rem;
+    }
+    .form-container button{
+        width: 100%;
+    }
+}
+
+@media (min-width: 1200px){
+    .main-content{
+        flex-direction: row;
+        align-items: flex-start;
+    }
+    .transaction-container,
+    .form-container{
+        width: 50%;
+    }
+}
