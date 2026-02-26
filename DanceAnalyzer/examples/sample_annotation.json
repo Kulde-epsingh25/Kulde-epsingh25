@@ -1,0 +1,68 @@
+{
+  "annotation_version": "1.0",
+  "video_id": "bharatanatyam_v001",
+  "dance_type": "bharatanatyam",
+  "category": "indian_classical",
+  "label_id": 0,
+  "split": "train",
+  "source": "youtube",
+  "source_url": "",
+  "duration_seconds": 120.5,
+  "fps": 30,
+  "total_frames": 3615,
+  "resolution": "640x480",
+  "performer_count": 1,
+  "performer_gender": "female",
+  "costume": "traditional",
+  "quality_score": 0.92,
+  "usable": true,
+  "notes": "Clear full-body visibility, minimal occlusion",
+  "sequences": [
+    {
+      "sequence_id": "bharatanatyam_v001_seq001",
+      "start_frame": 0,
+      "end_frame": 29,
+      "start_time_ms": 0,
+      "end_time_ms": 967,
+      "label_id": 0,
+      "dance_type": "bharatanatyam",
+      "quality": "high",
+      "keypoints_file": "pose_keypoints/indian_classical/bharatanatyam/bharatanatyam_v001_seq001.npy",
+      "frames_dir": "extracted_frames/indian_classical/bharatanatyam/bharatanatyam_v001/",
+      "pose_confidence_mean": 0.987,
+      "all_landmarks_visible": true,
+      "mudra": "abhaya_hasta",
+      "footwork": "tatadavu",
+      "tempo": "madhyakala"
+    },
+    {
+      "sequence_id": "bharatanatyam_v001_seq002",
+      "start_frame": 20,
+      "end_frame": 49,
+      "start_time_ms": 667,
+      "end_time_ms": 1633,
+      "label_id": 0,
+      "dance_type": "bharatanatyam",
+      "quality": "high",
+      "keypoints_file": "pose_keypoints/indian_classical/bharatanatyam/bharatanatyam_v001_seq002.npy",
+      "frames_dir": "extracted_frames/indian_classical/bharatanatyam/bharatanatyam_v001/",
+      "pose_confidence_mean": 0.981,
+      "all_landmarks_visible": true,
+      "mudra": "pataka_hasta",
+      "footwork": "natadavu",
+      "tempo": "madhyakala"
+    }
+  ],
+  "mediapipe_settings": {
+    "model_complexity": 1,
+    "smooth_landmarks": true,
+    "enable_segmentation": false,
+    "min_detection_confidence": 0.7,
+    "min_tracking_confidence": 0.6
+  },
+  "augmentation_applied": {
+    "horizontal_flip": false,
+    "brightness_jitter": false,
+    "speed_variation": false
+  }
+}

@@ -1,0 +1,40 @@
+label_id,label_name,category,category_id,recommended_videos,recommended_frames_per_video,recommended_samples,notes
+0,bharatanatyam,indian_classical,0,150,30,4500,South Indian classical dance with intricate footwork
+1,kathak,indian_classical,0,150,30,4500,North Indian classical dance with spins and expressions
+2,odissi,indian_classical,0,150,30,4500,East Indian classical dance with lyrical movements
+3,kuchipudi,indian_classical,0,150,30,4500,South Indian dance-drama tradition
+4,mohiniyattam,indian_classical,0,100,30,3000,Kerala classical dance with graceful swaying
+5,manipuri,indian_classical,0,100,30,3000,Northeast Indian dance with subtle movements
+6,kathakali,indian_classical,0,100,30,3000,Kerala classical dance-drama with elaborate costumes
+7,sattriya,indian_classical,0,100,30,3000,Assamese classical dance from monasteries
+8,bhangra,indian_folk,1,200,30,6000,Punjabi harvest festival dance
+9,garba,indian_folk,1,200,30,6000,Gujarat circular folk dance
+10,ghoomar,indian_folk,1,150,30,4500,Rajasthani royal folk dance
+11,bihu,indian_folk,1,150,30,4500,Assamese spring festival dance
+12,lavani,indian_folk,1,150,30,4500,Maharashtra folk dance with fast rhythm
+13,kalbelia,indian_folk,1,100,30,3000,Rajasthani snake-charmer community dance
+14,chhau,indian_folk,1,100,30,3000,Tribal martial dance from East India
+15,yakshagana,indian_folk,1,100,30,3000,Karnataka theatrical dance tradition
+16,hip_hop,western_street,2,250,30,7500,Urban street style with freestyling
+17,breakdance,western_street,2,250,30,7500,B-boy/B-girl floor acrobatics
+18,popping,western_street,2,200,30,6000,Robotic muscle-isolation street dance
+19,locking,western_street,2,200,30,6000,Funky lock and point movements
+20,krumping,western_street,2,150,30,4500,Expressive high-energy street dance
+21,street,western_street,2,150,30,4500,General urban street dance
+22,contemporary,contemporary_modern,3,200,30,6000,Fusion of classical and modern techniques
+23,modern,contemporary_modern,3,200,30,6000,Early 20th-century concert dance
+24,lyrical,contemporary_modern,3,150,30,4500,Dance that interprets song lyrics
+25,jazz,contemporary_modern,3,150,30,4500,Syncopated rhythmic dance style
+26,ballet,contemporary_modern,3,200,30,6000,Classical European theatrical dance
+27,salsa,latin_ballroom,4,200,30,6000,Latin Caribbean partner dance
+28,tango,latin_ballroom,4,200,30,6000,Argentine passionate partner dance
+29,waltz,latin_ballroom,4,150,30,4500,European ballroom dance in 3/4 time
+30,cha_cha,latin_ballroom,4,150,30,4500,Cuban Latin dance with triple step
+31,rumba,latin_ballroom,4,150,30,4500,Cuban sensual ballroom dance
+32,samba,latin_ballroom,4,150,30,4500,Brazilian carnival dance
+33,jive,latin_ballroom,4,100,30,3000,Fast-paced rock-and-roll derived dance
+34,bollywood,commercial_social,5,300,30,9000,Indian film-inspired energetic dance
+35,k_pop,commercial_social,5,300,30,9000,Korean pop synchronized choreography
+36,freestyle,commercial_social,5,200,30,6000,Unstructured improvised movement
+37,party,commercial_social,5,200,30,6000,Casual social dance styles
+38,zumba,commercial_social,5,150,30,4500,Fitness-dance fusion program
