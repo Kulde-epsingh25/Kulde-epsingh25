@@ -48,7 +48,7 @@ function updateTransactions() {
         incomeInput.textContent = `$${income.toFixed(2)}`;
         expenseInput.textContent = `$${Math.abs(expense).toFixed(2)}`;
         balanceDisplay.textContent = `$${balance.toFixed(2)}`;
-        localStorage.setItem('transactions', JSON.stringify(transactions));
+        localStorage.setItem('transactions', JSON.stringify(transactions)); // Save transactions to localStorage and JSON.stringify() converts the transactions array into a JSON string before storing it in localStorage. This allows us to persist the transaction data across page reloads.
     }
 
     function handleDelete(e) {
@@ -57,7 +57,7 @@ function updateTransactions() {
             return;
         }
         const id = Number(button.dataset.id);
-        transactions = transactions.filter(transaction => transaction.id !== id);
+        transactions = transactions.filter(transaction => transaction.id !== id); // This line filters out the transaction with the matching id from the transactions array, effectively deleting it.
         updateTransactions();
         updateSummary();
     }
