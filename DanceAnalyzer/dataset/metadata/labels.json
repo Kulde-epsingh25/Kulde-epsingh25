@@ -1,0 +1,77 @@
+{
+  "project": "Dance Analyzer",
+  "version": "1.0.0",
+  "description": "Multi-category dance recognition dataset for MediaPipe pose-based ML training",
+  "total_classes": 39,
+  "categories": {
+    "indian_classical": {
+      "label_start": 0,
+      "classes": {
+        "0": "bharatanatyam",
+        "1": "kathak",
+        "2": "odissi",
+        "3": "kuchipudi",
+        "4": "mohiniyattam",
+        "5": "manipuri",
+        "6": "kathakali",
+        "7": "sattriya"
+      }
+    },
+    "indian_folk": {
+      "label_start": 8,
+      "classes": {
+        "8": "bhangra",
+        "9": "garba",
+        "10": "ghoomar",
+        "11": "bihu",
+        "12": "lavani",
+        "13": "kalbelia",
+        "14": "chhau",
+        "15": "yakshagana"
+      }
+    },
+    "western_street": {
+      "label_start": 16,
+      "classes": {
+        "16": "hip_hop",
+        "17": "breakdance",
+        "18": "popping",
+        "19": "locking",
+        "20": "krumping",
+        "21": "street"
+      }
+    },
+    "contemporary_modern": {
+      "label_start": 22,
+      "classes": {
+        "22": "contemporary",
+        "23": "modern",
+        "24": "lyrical",
+        "25": "jazz",
+        "26": "ballet"
+      }
+    },
+    "latin_ballroom": {
+      "label_start": 27,
+      "classes": {
+        "27": "salsa",
+        "28": "tango",
+        "29": "waltz",
+        "30": "cha_cha",
+        "31": "rumba",
+        "32": "samba",
+        "33": "jive"
+      }
+    },
+    "commercial_social": {
+      "label_start": 34,
+      "classes": {
+        "34": "bollywood",
+        "35": "k_pop",
+        "36": "freestyle",
+        "37": "party",
+        "38": "zumba"
+      }
+    }
+  }
+}

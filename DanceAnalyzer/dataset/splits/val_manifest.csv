@@ -1,0 +1,6 @@
+sequence_file,label_id,dance_type,category,video_id,split
+pose_keypoints/indian_classical/bharatanatyam/bharatanatyam_v126_seq001.npy,0,bharatanatyam,indian_classical,bharatanatyam_v126,val
+pose_keypoints/indian_folk/bhangra/bhangra_v171_seq001.npy,8,bhangra,indian_folk,bhangra_v171,val
+pose_keypoints/western_street/hip_hop/hip_hop_v213_seq001.npy,16,hip_hop,western_street,hip_hop_v213,val
+pose_keypoints/latin_ballroom/salsa/salsa_v171_seq001.npy,27,salsa,latin_ballroom,salsa_v171,val
+pose_keypoints/commercial_social/bollywood/bollywood_v256_seq001.npy,34,bollywood,commercial_social,bollywood_v256,val

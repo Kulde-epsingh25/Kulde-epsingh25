@@ -1,0 +1,54 @@
+{
+  "project_name": "Dance Analyzer",
+  "description": "Large-scale multi-category dance recognition dataset using MediaPipe pose estimation",
+  "version": "1.0.0",
+  "created": "2026-02-26",
+  "pose_model": "MediaPipe Pose (BlazePose)",
+  "keypoints_count": 33,
+  "keypoints_per_frame": 33,
+  "coordinates_per_keypoint": 4,
+  "coordinate_format": "[x, y, z, visibility]",
+  "input_resolution": "640x480",
+  "target_fps": 30,
+  "sequence_length": 30,
+  "overlap_frames": 10,
+  "total_categories": 6,
+  "total_dance_types": 39,
+  "split_ratios": {
+    "train": 0.70,
+    "val": 0.15,
+    "test": 0.15
+  },
+  "recommended_totals": {
+    "minimum_videos_per_class": 100,
+    "recommended_videos_per_class": 150,
+    "frames_per_video": 30,
+    "sequence_length_frames": 30,
+    "minimum_total_videos": 4400,
+    "recommended_total_videos": 6600
+  },
+  "file_formats": {
+    "raw_video": ".mp4",
+    "processed_video": ".mp4",
+    "frame": ".jpg",
+    "keypoint": ".npy",
+    "annotation": ".json",
+    "sequence": ".npy"
+  },
+  "mediapipe_landmarks": [
+    "nose", "left_eye_inner", "left_eye", "left_eye_outer",
+    "right_eye_inner", "right_eye", "right_eye_outer",
+    "left_ear", "right_ear", "mouth_left", "mouth_right",
+    "left_shoulder", "right_shoulder",
+    "left_elbow", "right_elbow",
+    "left_wrist", "right_wrist",
+    "left_pinky", "right_pinky",
+    "left_index", "right_index",
+    "left_thumb", "right_thumb",
+    "left_hip", "right_hip",
+    "left_knee", "right_knee",
+    "left_ankle", "right_ankle",
+    "left_heel", "right_heel",
+    "left_foot_index", "right_foot_index"
+  ]
+}
