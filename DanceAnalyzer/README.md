@@ -15,8 +15,9 @@
 6. [Annotation JSON Format](#annotation-json-format)
 7. [File Naming Conventions](#file-naming-conventions)
 8. [Dataset Splits](#dataset-splits)
-9. [Quick Start](#quick-start)
-10. [Scripts Reference](#scripts-reference)
+9. [Raw Image Support](#raw-image-support)
+10. [Quick Start](#quick-start)
+11. [Scripts Reference](#scripts-reference)
 
 ---
 
@@ -117,6 +118,19 @@ DanceAnalyzer/
 │   │   │   │       ├── bharatanatyam_v001_f0001.jpg
 │   │   │   │       ├── bharatanatyam_v001_f0002.jpg
 │   │   │   │       └── ...
+│   │   │   └── kathak/ ...
+│   │   ├── indian_folk/ ...
+│   │   ├── western_street/ ...
+│   │   ├── contemporary_modern/ ...
+│   │   ├── latin_ballroom/ ...
+│   │   └── commercial_social/ ...
+│   │
+│   ├── raw_images/                    ← Optional still-image datasets by class
+│   │   ├── indian_classical/
+│   │   │   ├── bharatanatyam/
+│   │   │   │   ├── bharatanatyam_img001.jpg
+│   │   │   │   ├── bharatanatyam_img002.jpg
+│   │   │   │   └── ...
 │   │   │   └── kathak/ ...
 │   │   ├── indian_folk/ ...
 │   │   ├── western_street/ ...
@@ -363,6 +377,32 @@ sequence_file, label_id, dance_type, category, video_id, split
 
 ---
 
+## Raw Image Support
+
+You can also include class-wise still images (e.g., Kaggle pose images) as an **auxiliary** source.
+
+Put images under:
+
+```
+dataset/raw_images/{category}/{dance_type}/
+```
+
+Then extract pose sequences directly from those ordered images:
+
+```bash
+python scripts/extract_keypoints.py \
+  --image-dir dataset/raw_images/indian_classical/bharatanatyam \
+  --output-dir dataset/pose_keypoints/indian_classical/bharatanatyam \
+  --label-id 0
+```
+
+Notes:
+
+- `extract_keypoints.py` accepts **one** source at a time: `--video-dir` or `--image-dir`.
+- Image data should support video-based data, not replace it, because temporal dynamics are weaker.
+
+---
+
 ## Quick Start
 
 ### 1. Create all directories
@@ -385,6 +425,15 @@ Example: `dataset/videos/indian_classical/bharatanatyam/raw_videos/bharatanatyam
 ```bash
 python scripts/extract_keypoints.py \
   --video-dir dataset/videos/indian_classical/bharatanatyam/raw_videos \
+  --output-dir dataset/pose_keypoints/indian_classical/bharatanatyam \
+  --label-id 0
+```
+
+Or from raw images:
+
+```bash
+python scripts/extract_keypoints.py \
+  --image-dir dataset/raw_images/indian_classical/bharatanatyam \
   --output-dir dataset/pose_keypoints/indian_classical/bharatanatyam \
   --label-id 0
 ```
@@ -421,7 +470,7 @@ y = np.array(y)   # [N]
 | Script                  | Purpose                                                 |
 |-------------------------|---------------------------------------------------------|
 | `setup_dataset.py`      | Creates the full directory tree with `.gitkeep` files   |
-| `extract_keypoints.py`  | Runs MediaPipe on videos → saves `.npy` sequence arrays |
+| `extract_keypoints.py`  | Runs MediaPipe on videos or raw images → saves `.npy` sequence arrays |
 | `build_splits.py`       | Scans `pose_keypoints/` → writes manifest CSV files     |
 
 ---

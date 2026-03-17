@@ -70,6 +70,11 @@ def build_structure(base: str) -> None:
         for dance in dances:
             make_dir(os.path.join(base, "extracted_frames", category, dance))
 
+    # 2b. raw_images/ (optional still-image datasets)
+    for category, dances in CATEGORIES.items():
+        for dance in dances:
+            make_dir(os.path.join(base, "raw_images", category, dance))
+
     # 3. pose_keypoints/
     for category, dances in CATEGORIES.items():
         for dance in dances:
