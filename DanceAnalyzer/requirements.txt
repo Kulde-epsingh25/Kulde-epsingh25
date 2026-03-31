@@ -1,4 +1,19 @@
+# ── Core (always required) ────────────────────────────────────────────────────
 mediapipe>=0.10.0
 opencv-python>=4.8.0
 numpy>=1.24.0
 pandas>=2.0.0
+tqdm>=4.65.0          # progress bars in extraction scripts
+
+# ── MoveNet backend (optional – skip if using mediapipe/holistic only) ────────
+tensorflow>=2.12.0
+tensorflow-hub>=0.13.0
+
+# ── MMPose backend (optional – highest accuracy, recommended for Indian Classical)
+# Install via OpenMIM (do NOT use plain pip for mmcv/mmpose):
+#   pip install openmim
+#   mim install mmengine "mmcv>=2.0.0" "mmdet>=3.0.0" "mmpose>=1.0.0"
+mmpose>=1.0.0
+
+# ── Gesture extractor (optional – for extract_gestures.py) ───────────────────
+scipy>=1.10.0         # smooth motion scores (uniform_filter1d)
