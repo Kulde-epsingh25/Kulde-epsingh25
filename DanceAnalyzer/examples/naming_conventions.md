@@ -44,15 +44,23 @@ extracted_frames/{category}/{dance_type}/{dance_type}_v{NNN}/
 
 ## Pose Keypoints (.npy arrays)
 
-### Per-sequence keypoint array  (shape: [30, 33, 4])
+### Per-sequence keypoint array — shape depends on backend
+
 ```
 {dance_type}_v{NNN}_seq{SSS}.npy
 ```
 - Example: `ballet_v007_seq001.npy`
-- Array shape: `[sequence_length, 33_landmarks, 4_coords]`
-- Coords order: `[x, y, z, visibility]`
 
-### Per-frame keypoint file  (shape: [33, 4])
+| Backend    | Array shape        | Coords              |
+|------------|--------------------|---------------------|
+| `holistic` | `[seq_len, 75, 4]` | (x, y, z, vis)      |
+| `mediapipe`| `[seq_len, 33, 4]` | (x, y, z, vis)      |
+| `movenet`  | `[seq_len, 17, 3]` | (x, y, score)       |
+
+Default `seq_len` = 30.
+
+### Per-frame keypoint file
+
 ```
 {dance_type}_v{NNN}_f{FFFF}_kp.npy
 ```
