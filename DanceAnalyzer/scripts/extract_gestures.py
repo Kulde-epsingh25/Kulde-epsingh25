@@ -20,11 +20,15 @@ Backend shapes (same as extract_keypoints.py)
   mediapipe  → [seq_len, 33, 4]   (x, y, z, visibility)
   holistic   → [seq_len, 75, 4]   body(33) + L-hand(21) + R-hand(21)
   movenet    → [seq_len, 17, 3]   (x, y, score)
+  mmpose     → [seq_len, 133, 3]  RTMPose-Wholebody (default, 133 COCO-WholeBody kpts)
+             → [seq_len, 17, 3]   RTMPose body-only  (--mmpose-model human)
 
 Installation
 ------------
   pip install mediapipe opencv-python numpy tqdm scipy   # mediapipe / holistic
   pip install tensorflow tensorflow-hub                  # movenet
+  pip install openmim                                    # mmpose
+  mim install mmengine "mmcv>=2.0.0" "mmdet>=3.0.0" "mmpose>=1.0.0"
 
 Usage
 -----
@@ -33,6 +37,12 @@ Usage
       --video dataset/videos/indian_classical/bharatanatyam/raw_videos/bharatanatyam_v001.mp4 \\
       --output-dir dataset/pose_keypoints/indian_classical/bharatanatyam \\
       --label-id 0 --backend holistic
+
+  # MMPose Wholebody — highest accuracy for Indian Classical
+  python scripts/extract_gestures.py \\
+      --video dataset/videos/indian_classical/kathak/raw_videos/kathak_v001.mp4 \\
+      --output-dir dataset/pose_keypoints/indian_classical/kathak \\
+      --label-id 1 --backend mmpose --mmpose-model wholebody
 
   # Process all videos in a directory
   python scripts/extract_gestures.py \\
@@ -61,8 +71,29 @@ except ImportError:
 try:
     from tqdm import tqdm
 except ImportError:
-    def tqdm(iterable=None, **kwargs):  # type: ignore[misc]
-        return iterable if iterable is not None else range(0)
+    # Fallback: no-op wrapper that matches tqdm's interface
+    class tqdm:  # type: ignore[no-redef]
+        def __init__(self, iterable=None, **kwargs):
+            self._iterable = iterable
+
+        def __iter__(self):
+            return iter(self._iterable) if self._iterable is not None else iter([])
+
+        def __enter__(self):
+            return self
+
+        def __exit__(self, *args):
+            pass
+
+        def update(self, n=1):
+            pass
+
+        @staticmethod
+        def write(msg, **kwargs):
+            print(msg)
+
+        def set_postfix(self, **kwargs):
+            pass
 
 try:
     from scipy.ndimage import uniform_filter1d as _smooth
@@ -81,12 +112,27 @@ from extract_keypoints import _build_backend, _frames_to_sequences  # noqa: E402
 # ─── Motion analysis ──────────────────────────────────────────────────────────
 
 def _smooth_scores(scores: np.ndarray, window: int) -> np.ndarray:
-    """Apply a simple uniform moving average."""
+    """Apply a uniform moving average with edge-replicated padding.
+
+    scipy's uniform_filter1d handles boundaries correctly by default.
+    The numpy fallback replicates boundary values before convolving so
+    the first and last `window//2` frames are not artificially suppressed
+    the way `np.convolve(..., mode='same')` with zero-padding would do.
+    """
     if _HAS_SCIPY:
         return _smooth(scores.astype(float), size=max(3, window))
-    # Fallback: numpy-based rolling mean
-    kernel = np.ones(max(3, window)) / max(3, window)
-    return np.convolve(scores, kernel, mode="same")
+    # Fallback: edge-replicate then convolve in 'valid' mode
+    w = max(3, window)
+    half = w // 2
+    padded = np.pad(scores.astype(float), (half, half), mode="edge")
+    kernel = np.ones(w) / w
+    smoothed = np.convolve(padded, kernel, mode="valid")
+    # len(padded) = len(scores) + w - 1
+    # len(valid output) = len(padded) - w + 1 = len(scores)
+    assert len(smoothed) == len(scores), (
+        f"Smoothing length mismatch: expected {len(scores)}, got {len(smoothed)}"
+    )
+    return smoothed
 
 
 def compute_motion_scores(video_path: str, scale: float = 0.25) -> tuple[np.ndarray, float]:
@@ -328,11 +374,14 @@ Motion thresholds (--min-motion):
     parser.add_argument("--label-id", type=int, required=True,
                         help="Integer class label")
     parser.add_argument("--backend", default="holistic",
-                        choices=["mediapipe", "holistic", "movenet"],
-                        help="Pose backend (default: holistic — best for Indian Classical)")
+                        choices=["mediapipe", "holistic", "movenet", "mmpose"],
+                        help="Pose backend (default: holistic — good for Indian Classical)")
     parser.add_argument("--movenet-variant", default="thunder",
                         choices=["lightning", "thunder"],
                         help="MoveNet variant (default: thunder)")
+    parser.add_argument("--mmpose-model", default="wholebody",
+                        choices=["wholebody", "human"],
+                        help="MMPose model alias (default: wholebody — 133 keypoints)")
     parser.add_argument("--sequence-length", type=int, default=30,
                         help="Frames per sequence (default: 30)")
     parser.add_argument("--overlap", type=int, default=10,
@@ -348,7 +397,7 @@ Motion thresholds (--min-motion):
     args = parser.parse_args()
 
     os.makedirs(args.output_dir, exist_ok=True)
-    backend = _build_backend(args.backend, args.movenet_variant)
+    backend = _build_backend(args.backend, args.movenet_variant, args.mmpose_model)
     print(f"Backend: {backend.name}  |  seq_len={args.sequence_length}  "
           f"overlap={args.overlap}  min_conf={args.min_confidence}")
 

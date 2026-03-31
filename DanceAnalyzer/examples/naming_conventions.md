@@ -51,11 +51,13 @@ extracted_frames/{category}/{dance_type}/{dance_type}_v{NNN}/
 ```
 - Example: `ballet_v007_seq001.npy`
 
-| Backend    | Array shape        | Coords              |
-|------------|--------------------|---------------------|
-| `holistic` | `[seq_len, 75, 4]` | (x, y, z, vis)      |
-| `mediapipe`| `[seq_len, 33, 4]` | (x, y, z, vis)      |
-| `movenet`  | `[seq_len, 17, 3]` | (x, y, score)       |
+| Backend               | Array shape         | Coords              |
+|-----------------------|---------------------|---------------------|
+| `mmpose wholebody`    | `[seq_len, 133, 3]` | (x_norm, y_norm, score) |
+| `holistic`            | `[seq_len, 75, 4]`  | (x, y, z, vis)      |
+| `mediapipe`           | `[seq_len, 33, 4]`  | (x, y, z, vis)      |
+| `movenet`             | `[seq_len, 17, 3]`  | (x_norm, y_norm, score) |
+| `mmpose human`        | `[seq_len, 17, 3]`  | (x_norm, y_norm, score) |
 
 Default `seq_len` = 30.
 

@@ -85,6 +85,27 @@ Use when you need rapid batch extraction of a very large video collection.
 Output array shape: `[seq_len, 17, 3]`  
 Install: `pip install tensorflow tensorflow-hub`
 
+### 🏆 MMPose — RTMPose (Highest Accuracy)
+
+**[MMPose](https://github.com/open-mmlab/mmpose)** by OpenMMLab provides the
+most accurate pose models available.  
+The `wholebody` alias loads **RTMPose-Wholebody** which detects **133
+COCO-WholeBody keypoints** in a single forward pass — body, feet, face
+*and* both hands — making it the gold standard for Indian Classical dance
+analysis where mudras and bhava (facial expressions) both carry meaning.
+
+| Model alias | Keypoints | Best for                          |
+|-------------|-----------|-----------------------------------|
+| `wholebody` | 133       | Indian Classical (body+hands+face)|
+| `human`     | 17 (COCO) | Folk / Street / Ballroom          |
+
+Output array shape: `[seq_len, 133, 3]` (wholebody) or `[seq_len, 17, 3]` (human)  
+Install:
+```bash
+pip install openmim
+mim install mmengine "mmcv>=2.0.0" "mmdet>=3.0.0" "mmpose>=1.0.0"
+```
+
 ---
 
 ## Reference Repositories
@@ -94,12 +115,14 @@ pipeline. Reviewing them is strongly recommended before training models.
 
 | Repository | What it offers |
 |------------|---------------|
-| [**MMPose** (OpenMMLab)](https://github.com/open-mmlab/mmpose) | Production-grade toolbox; RTMPose-Wholebody gives **133 keypoints** (body+hands+face) — highest accuracy option |
+| [**MMPose** (OpenMMLab)](https://github.com/open-mmlab/mmpose) | Production-grade toolbox; RTMPose-Wholebody **133 keypoints** — integrated as `--backend mmpose` |
 | [**MoveNet** (TF Hub)](https://tfhub.dev/s?q=movenet) | Ultra-fast TF Hub models; Lightning runs 30+ FPS on CPU |
 | [**MoveNet tutorial** (TF Docs)](https://github.com/tensorflow/docs/blob/master/site/en/hub/tutorials/movenet.ipynb) | Official colab showing crop-region tracking for video |
 | [**AlphaPose** (SJTU)](https://github.com/MVIG-SJTU/AlphaPose) | Multi-person tracking + wholebody (face+hand+foot); HybrIK for 3D mesh |
 | [**ViTPose**](https://github.com/ViTAE-Transformer/ViTPose) | Vision-Transformer backbone, SOTA accuracy on COCO |
 | [**RTMPose**](https://github.com/open-mmlab/mmpose/tree/main/projects/rtmpose) | Real-time 130 FPS multi-person, wholebody variant available |
+| [**RTMO**](https://github.com/open-mmlab/mmpose/tree/main/projects/rtmo) | One-stage real-time multi-person — no separate detector needed |
+| [**RTMW3D**](https://github.com/open-mmlab/mmpose/tree/main/projects/rtmpose3d) | Real-time 3D wholebody pose — future 3D dance analysis |
 
 ---
 
@@ -387,6 +410,26 @@ COCO 17 keypoints · each value: `[x, y, score]`
 
 Flatten to `[seq_len, 51]` for LSTM/GRU input.
 
+### MMPose wholebody — `[seq_len, 133, 3]`
+
+COCO-WholeBody 133 keypoints · each value: `[x_norm, y_norm, score]`
+
+| Indices  | Region          | Count | Notes                                    |
+|----------|-----------------|-------|------------------------------------------|
+| 0 – 16   | Body (COCO 17)  | 17    | Same order as MoveNet above              |
+| 17 – 22  | Feet            | 6     | left_big_toe, left_small_toe, left_heel, right × 3 |
+| 23 – 90  | Face            | 68    | 68 facial landmarks (eyes, nose, mouth, contour) |
+| 91 – 111 | Left hand       | 21    | WRIST + 4 fingers × 5 joints            |
+| 112 – 132| Right hand      | 21    | WRIST + 4 fingers × 5 joints            |
+
+Flatten to `[seq_len, 399]` for LSTM/GRU input.  
+Use `--backend mmpose --mmpose-model wholebody` to extract this layout.
+
+### MMPose human — `[seq_len, 17, 3]`
+
+Same COCO 17 keypoints as MoveNet, but extracted with RTMPose backbone
+(higher accuracy).  Flatten to `[seq_len, 51]`.
+
 ---
 
 ## Keypoints CSV Format
@@ -536,7 +579,15 @@ Example: `dataset/videos/indian_classical/bharatanatyam/raw_videos/bharatanatyam
 
 ### 4a. Extract keypoints — standard videos
 
-**Indian Classical (Holistic — body + hands for mudras):**
+**Indian Classical — RTMPose-Wholebody 133 kpts (highest accuracy):**
+```bash
+python scripts/extract_keypoints.py \
+  --video-dir dataset/videos/indian_classical/bharatanatyam/raw_videos \
+  --output-dir dataset/pose_keypoints/indian_classical/bharatanatyam \
+  --label-id 0 --backend mmpose --mmpose-model wholebody
+```
+
+**Indian Classical — Holistic (body + hands, no GPU required):**
 ```bash
 python scripts/extract_keypoints.py \
   --video-dir dataset/videos/indian_classical/bharatanatyam/raw_videos \
@@ -565,7 +616,7 @@ python scripts/extract_keypoints.py \
 python scripts/extract_keypoints.py \
   --image-dir dataset/raw_images/indian_classical/bharatanatyam \
   --output-dir dataset/pose_keypoints/indian_classical/bharatanatyam \
-  --label-id 0 --backend holistic
+  --label-id 0 --backend mmpose --mmpose-model wholebody
 ```
 
 ### 4b. Extract gestures from long recordings
@@ -575,7 +626,13 @@ Use `extract_gestures.py` when your source videos are long stage recordings
 skips static / transition passages, saving only meaningful sequences.
 
 ```bash
-# One long video
+# One long video — MMPose Wholebody (highest accuracy)
+python scripts/extract_gestures.py \
+  --video dataset/videos/indian_classical/bharatanatyam/raw_videos/bharatanatyam_v001.mp4 \
+  --output-dir dataset/pose_keypoints/indian_classical/bharatanatyam \
+  --label-id 0 --backend mmpose --mmpose-model wholebody --min-motion 0.025
+
+# One long video — Holistic (no GPU required)
 python scripts/extract_gestures.py \
   --video dataset/videos/indian_classical/bharatanatyam/raw_videos/bharatanatyam_v001.mp4 \
   --output-dir dataset/pose_keypoints/indian_classical/bharatanatyam \
@@ -585,7 +642,7 @@ python scripts/extract_gestures.py \
 python scripts/extract_gestures.py \
   --video-dir dataset/videos/indian_classical/kathak/raw_videos \
   --output-dir dataset/pose_keypoints/indian_classical/kathak \
-  --label-id 1 --backend holistic
+  --label-id 1 --backend mmpose --mmpose-model wholebody
 ```
 
 > **Tip:** For subtle Indian Classical movements lower `--min-motion` to `0.02`.
@@ -629,17 +686,18 @@ y = np.array(y)   # [N]
 
 ### `extract_keypoints.py` arguments
 
-| Argument             | Default    | Description                                      |
-|----------------------|------------|--------------------------------------------------|
-| `--video-dir`        | —          | Directory of video files (mutually exclusive)    |
-| `--image-dir`        | —          | Directory of ordered still images                |
-| `--output-dir`       | required   | Where to save `.npy` sequences                   |
-| `--label-id`         | required   | Integer class label                              |
-| `--backend`          | `holistic` | `mediapipe` / `holistic` / `movenet`             |
-| `--movenet-variant`  | `thunder`  | `lightning` or `thunder`                         |
-| `--sequence-length`  | `30`       | Frames per sequence                              |
-| `--overlap`          | `10`       | Overlapping frames between sequences             |
-| `--min-confidence`   | `0.5`      | Minimum mean landmark confidence to keep a seq   |
+| Argument             | Default      | Description                                              |
+|----------------------|--------------|----------------------------------------------------------|
+| `--video-dir`        | —            | Directory of video files (mutually exclusive)            |
+| `--image-dir`        | —            | Directory of ordered still images                        |
+| `--output-dir`       | required     | Where to save `.npy` sequences                           |
+| `--label-id`         | required     | Integer class label                                      |
+| `--backend`          | `holistic`   | `mediapipe` / `holistic` / `movenet` / `mmpose`          |
+| `--movenet-variant`  | `thunder`    | `lightning` or `thunder`                                 |
+| `--mmpose-model`     | `wholebody`  | `wholebody` (133 kpts) or `human` (17 kpts)              |
+| `--sequence-length`  | `30`         | Frames per sequence                                      |
+| `--overlap`          | `10`         | Overlapping frames between sequences                     |
+| `--min-confidence`   | `0.5`        | Minimum mean landmark confidence to keep a sequence      |
 
 ### `extract_gestures.py` arguments
 
@@ -663,9 +721,10 @@ opencv-python>=4.8.0
 numpy>=1.24.0
 pandas>=2.0.0
 tqdm>=4.65.0
-scipy>=1.10.0         # gesture extractor
-tensorflow>=2.12.0    # MoveNet only
+scipy>=1.10.0             # gesture extractor
+tensorflow>=2.12.0        # MoveNet only
 tensorflow-hub>=0.13.0
+mmpose>=1.0.0             # install via mim (see below)
 ```
 
 Install core packages:
@@ -676,6 +735,12 @@ pip install mediapipe opencv-python numpy pandas tqdm scipy
 Install MoveNet extras:
 ```bash
 pip install tensorflow tensorflow-hub
+```
+
+Install MMPose (recommended for Indian Classical — highest accuracy):
+```bash
+pip install openmim
+mim install mmengine "mmcv>=2.0.0" "mmdet>=3.0.0" "mmpose>=1.0.0"
 ```
 
 ---

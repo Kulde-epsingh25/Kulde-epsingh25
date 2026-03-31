@@ -13,19 +13,32 @@ Backends
                  *** RECOMMENDED for Indian Classical dance (mudras) ***
   movenet    — TF Hub MoveNet (Lightning or Thunder) output: [seq_len, 17, 3]
                  (x, y, score) — 17 COCO keypoints, GPU-friendly
+  mmpose     — MMPose RTMPose via MMPoseInferencer  output varies by model:
+                 wholebody → [seq_len, 133, 3]  133 COCO-WholeBody keypoints
+                             body(17)+feet(6)+face(68)+hands(42)
+                             *** HIGHEST ACCURACY for Indian Classical ***
+                 human     → [seq_len, 17, 3]   17 COCO body keypoints
 
 Installation
 ------------
   pip install mediapipe opencv-python numpy tqdm           # mediapipe / holistic
   pip install tensorflow tensorflow-hub                    # movenet
+  pip install openmim                                      # mmpose
+  mim install mmengine "mmcv>=2.0.0" "mmdet>=3.0.0" "mmpose>=1.0.0"
 
 Usage
 -----
-  # Indian Classical: full body + both hands (mudras)
+  # Indian Classical: full body + both hands (mudras) — holistic
   python scripts/extract_keypoints.py \\
       --video-dir dataset/videos/indian_classical/bharatanatyam/raw_videos \\
       --output-dir dataset/pose_keypoints/indian_classical/bharatanatyam \\
       --label-id 0 --backend holistic
+
+  # Indian Classical: RTMPose-Wholebody 133 kpts — highest accuracy
+  python scripts/extract_keypoints.py \\
+      --video-dir dataset/videos/indian_classical/bharatanatyam/raw_videos \\
+      --output-dir dataset/pose_keypoints/indian_classical/bharatanatyam \\
+      --label-id 0 --backend mmpose --mmpose-model wholebody
 
   # Fast MoveNet Thunder extraction
   python scripts/extract_keypoints.py \\
@@ -262,7 +275,98 @@ class MoveNetBackend:
         return "movenet"
 
 
-def _build_backend(name: str, movenet_variant: str = "thunder"):
+class MMPoseBackend:
+    """OpenMMLab MMPose backend using MMPoseInferencer.
+
+    Uses RTMPose models — state-of-the-art accuracy on COCO-WholeBody.
+
+    Models
+    ------
+    wholebody  — RTMPose-Wholebody: 133 COCO-WholeBody keypoints
+                 Layout: body(0-16) + feet(17-22) + face(23-90) + hands(91-132)
+                 *** HIGHEST ACCURACY for Indian Classical dance ***
+                 Captures mudras (hand gestures) + facial expressions (bhava)
+    human      — RTMPose body-only: 17 COCO keypoints
+                 Fast, GPU-efficient, good for folk/street dance
+
+    Output
+    ------
+    [n_kpts, 3] per frame  — (x_norm, y_norm, score)
+    x_norm = x_pixel / frame_width  (normalised to [0, 1])
+    y_norm = y_pixel / frame_height
+
+    Installation
+    ------------
+      pip install openmim
+      mim install mmengine "mmcv>=2.0.0" "mmdet>=3.0.0" "mmpose>=1.0.0"
+    """
+
+    # Maps model alias → expected keypoint count
+    _KPT_COUNTS: dict[str, int] = {
+        "wholebody": 133,
+        "human": 17,
+    }
+
+    def __init__(self, model: str = "wholebody") -> None:
+        try:
+            from mmpose.apis import MMPoseInferencer
+        except ImportError:
+            raise SystemExit(
+                "MMPose is not installed. Install with:\n"
+                "  pip install openmim\n"
+                "  mim install mmengine 'mmcv>=2.0.0' 'mmdet>=3.0.0' 'mmpose>=1.0.0'"
+            )
+        self._model_alias = model
+        self._n_kpts = self._KPT_COUNTS.get(model, 133)
+        self._inferencer = MMPoseInferencer(model)
+        print(f"  MMPose model '{model}' loaded ({self._n_kpts} keypoints).")
+
+    def process_frame(self, rgb: np.ndarray) -> np.ndarray:
+        """Return [n_kpts, 3] array (x_norm, y_norm, score).
+
+        Coordinates are normalised to [0, 1] by the frame dimensions.
+        If no person is detected, or the frame has zero dimensions,
+        a zero array is returned.
+        If multiple people are detected the one with the highest mean
+        keypoint score is selected (most confident detection).
+        """
+        h, w = rgb.shape[:2]
+        if h <= 0 or w <= 0:
+            return np.zeros((self._n_kpts, 3), dtype=np.float32)
+
+        result = next(self._inferencer(rgb, show=False, return_datasample=False))
+        persons = result.get("predictions", [[]])[0]
+
+        if not persons:
+            return np.zeros((self._n_kpts, 3), dtype=np.float32)
+
+        # Pick the person with the highest mean keypoint score
+        best = max(
+            persons,
+            key=lambda p: float(np.mean(p["keypoint_scores"])),
+        )
+        kps = np.array(best["keypoints"], dtype=np.float32)       # [K, 2] pixel
+        scores = np.array(best["keypoint_scores"], dtype=np.float32)  # [K]
+
+        # Normalise pixel coords → [0, 1]
+        kps[:, 0] /= w
+        kps[:, 1] /= h
+
+        return np.concatenate([kps, scores[:, np.newaxis]], axis=1)  # [K, 3]
+
+    def mean_confidence(self, kp: np.ndarray) -> float:
+        """Mean keypoint score (channel index 2)."""
+        return float(kp[:, 2].mean())
+
+    def close(self) -> None:
+        pass  # MMPoseInferencer has no explicit close
+
+    @property
+    def name(self) -> str:
+        return f"mmpose_{self._model_alias}"
+
+
+def _build_backend(name: str, movenet_variant: str = "thunder", mmpose_model: str = "wholebody"):
     """Factory: return the requested backend instance."""
     name = name.lower()
     if name == "mediapipe":
@@ -271,7 +375,11 @@ def _build_backend(name: str, movenet_variant: str = "thunder"):
         return HolisticBackend()
     if name == "movenet":
         return MoveNetBackend(variant=movenet_variant)
-    raise ValueError(f"Unknown backend '{name}'. Choose: mediapipe | holistic | movenet")
+    if name == "mmpose":
+        return MMPoseBackend(model=mmpose_model)
+    raise ValueError(
+        f"Unknown backend '{name}'. Choose: mediapipe | holistic | movenet | mmpose"
+    )
 
 
 # ─── Sequence builders ────────────────────────────────────────────────────────
@@ -283,13 +391,21 @@ def _frames_to_sequences(
     overlap: int,
     min_confidence: float,
 ) -> list[np.ndarray]:
-    """Slide a window over frame keypoints and return valid sequences."""
-    step = sequence_length - overlap
+    """Slide a window over frame keypoints and return valid sequences.
+
+    Confidence is read from the *last* channel of each keypoint array,
+    which is the visibility/score channel for every backend:
+      mediapipe / holistic → index 3 (visibility)
+      movenet / mmpose     → index 2 (score)
+    Using the last channel avoids backend-specific branching and is O(1)
+    in memory by operating on the already-constructed sequence array.
+    """
+    step = max(1, sequence_length - overlap)
     sequences = []
     for start in range(0, len(frames_kp) - sequence_length + 1, step):
         seq = np.array(frames_kp[start: start + sequence_length], dtype=np.float32)
-        conf = float(np.mean([backend.mean_confidence(f) for f in frames_kp[start: start + sequence_length]]))
-        if conf >= min_confidence:
+        # Vectorised mean over [seq_len, n_kpts] confidence channel
+        if float(seq[:, :, -1].mean()) >= min_confidence:
             sequences.append(seq)
     return sequences
 
@@ -355,10 +471,11 @@ def process_directory(
     overlap: int,
     backend_name: str,
     movenet_variant: str,
+    mmpose_model: str,
     min_confidence: float,
 ) -> None:
     os.makedirs(output_dir, exist_ok=True)
-    backend = _build_backend(backend_name, movenet_variant)
+    backend = _build_backend(backend_name, movenet_variant, mmpose_model)
     print(f"  Backend : {backend.name}  |  seq_len={sequence_length}  overlap={overlap}  min_conf={min_confidence}")
 
     total_seqs = 0
@@ -408,9 +525,12 @@ def main() -> None:
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
 Backends:
-  mediapipe  → [seq_len, 33, 4]  BlazePose body (x, y, z, visibility)
-  holistic   → [seq_len, 75, 4]  Body + both hands (BEST for Indian Classical)
-  movenet    → [seq_len, 17, 3]  MoveNet 17 COCO keypoints (x, y, score)
+  mediapipe        → [seq_len, 33, 4]   BlazePose body (x, y, z, visibility)
+  holistic         → [seq_len, 75, 4]   Body + both hands (good for Indian Classical)
+  movenet          → [seq_len, 17, 3]   MoveNet 17 COCO keypoints (x, y, score)
+  mmpose           → varies by --mmpose-model:
+    wholebody      → [seq_len, 133, 3]  RTMPose-Wholebody (BEST for Indian Classical)
+    human          → [seq_len, 17, 3]   RTMPose body-only
         """,
     )
     src = parser.add_mutually_exclusive_group(required=True)
@@ -422,11 +542,14 @@ Backends:
     parser.add_argument("--label-id", type=int, required=True,
                         help="Integer class label (see dataset/metadata/labels.json)")
     parser.add_argument("--backend", default="holistic",
-                        choices=["mediapipe", "holistic", "movenet"],
+                        choices=["mediapipe", "holistic", "movenet", "mmpose"],
                         help="Pose estimation backend (default: holistic)")
     parser.add_argument("--movenet-variant", default="thunder",
                         choices=["lightning", "thunder"],
                         help="MoveNet variant — thunder is more accurate (default: thunder)")
+    parser.add_argument("--mmpose-model", default="wholebody",
+                        choices=["wholebody", "human"],
+                        help="MMPose model alias (default: wholebody — 133 keypoints)")
     parser.add_argument("--sequence-length", type=int, default=30,
                         help="Frames per sequence (default: 30)")
     parser.add_argument("--overlap", type=int, default=10,
@@ -444,6 +567,7 @@ Backends:
         overlap=args.overlap,
         backend_name=args.backend,
         movenet_variant=args.movenet_variant,
+        mmpose_model=args.mmpose_model,
         min_confidence=args.min_confidence,
     )
 
